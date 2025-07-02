@@ -11,15 +11,13 @@ use App\Models\UserInformation;
 
 class AuthController extends Controller
 {
-    
-
     public function login(Request $request)
     {
          try {
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
-            'role' => 'required|in:manager,employee,admin',
+            'role' => 'required|in:Manager,Employee,Admin',
         ]);
 
        
@@ -33,11 +31,12 @@ class AuthController extends Controller
                 return response()->json(['message' => 'Role mismatch'], 403);
             }
 
-            $token = $user->createToken('api_token')->plainTextToken;
+            $token = $user->createToken('auth_token')->plainTextToken;
 
             return response()->json([
                 'message' => 'Login successful',
-                'token' => $token,
+                'access_token' => $token,
+                'token_type' => 'Bearer',
                 'user' => [
                     'id' => $user->id,
                     'name' => $user->name,

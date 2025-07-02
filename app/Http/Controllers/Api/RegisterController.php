@@ -24,11 +24,11 @@ class RegisterController extends Controller
             'name' => 'required|string',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6',
-            'role' => 'required|in:manager,employee,admin',
+            'role' => 'required|in:Manager,Employee,Admin',
             'position' => 'required|string',
             'current_workplace' => 'required|string',
             'mobile_number' => 'required|digits_between:10,15|regex:/^[0-9]+$/',
-            'gender' => 'required|in:male,female,other',
+            'gender' => 'required|in:Male,Female,Other',
             'profile_photo' => 'nullable|image|max:2048'
         ]);
 
@@ -58,12 +58,10 @@ class RegisterController extends Controller
                 'profile_photo' => $photoPath,
             ]);
 
-            $token = $user->createToken('api_token')->plainTextToken;
+           // $token = $user->createToken('auth_token')->plainTextToken;
 
             return response()->json([
                 'message' => 'User registered successfully',
-                'user' => $user,
-                'token' => $token,
             ], 201);
 
         } catch (\Exception $e) {
