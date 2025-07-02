@@ -23,6 +23,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'reference_number', // Added reference_number to fillable attributes
     ];
 
     /**
@@ -48,7 +49,7 @@ class User extends Authenticatable
         ];
     }
 
-    public function information()
+    public function userInformation()
     {
         return $this->hasOne(UserInformation::class);
     }

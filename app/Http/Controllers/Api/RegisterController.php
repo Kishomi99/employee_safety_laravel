@@ -31,14 +31,27 @@ class RegisterController extends Controller
             'gender' => 'required|in:Male,Female,Other',
             'profile_photo' => 'nullable|image|max:2048'
         ]);
+//reference_number
+        // Generate unique reference number
+     $lastUser = User::where('reference_number', 'like', 'RFN%')
+                ->orderByDesc('id')
+                ->first();
 
-     
+$lastNumber = 0;
+
+if ($lastUser && preg_match('/RFN(\d+)/', $lastUser->reference_number, $matches)) {
+    $lastNumber = (int) $matches[1];
+}
+
+$newNumber = $lastNumber + 1;
+$referenceNumber = 'RFN' . str_pad($newNumber, 3, '0', STR_PAD_LEFT); 
             // Create User
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
                 'role' => $request->role,
+                'reference_number' => $referenceNumber,
                 
             ]);
 
@@ -49,6 +62,7 @@ class RegisterController extends Controller
             }
 
             // Create UserInformation record
+            //$userInfo = UserInformation::create([
             UserInformation::create([
                 'user_id' => $user->id,
                 'position' => $request->position,
@@ -57,11 +71,13 @@ class RegisterController extends Controller
                 'gender' => $request->gender,
                 'profile_photo' => $photoPath,
             ]);
+// Load relationship
+      //  $user->load('userInformation');
 
-           // $token = $user->createToken('auth_token')->plainTextToken;
 
             return response()->json([
                 'message' => 'User registered successfully',
+               // 'user ' => $user
             ], 201);
 
         } catch (\Exception $e) {
